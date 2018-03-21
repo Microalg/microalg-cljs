@@ -1,8 +1,8 @@
 (ns microalg.core-test
-    (:require [cljs.test :refer-macros [deftest is]]))
+    (:require [cljs.test :refer-macros [deftest are]]
+              [microalg.core :refer (evaluate-str)]))
 
-(deftest i-should-fail
-    (is (= 1 0)))
-
-(deftest i-should-succeed
-    (is (= 1 1)))
+(deftest arithmetics-test
+    (are [expected actual] (= expected actual)
+         3 (evaluate-str "(+ 1 2)")
+         6 (evaluate-str "(+ 1 (+ 2 3))")))

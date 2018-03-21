@@ -1,17 +1,136 @@
 (ns microalg.core
-    (:require ))
+    (:require [cljs.reader :as reader]))
 
 (enable-console-print!)
 
-(println "This text is printed from src/microalg/core.cljs. Go ahead and edit it and see reloading in action.")
+; « the book » means Lisp in Small Pieces
+; atom? and pair? are not in Clojure (many more types than atom vs pairs)
+(def atom? #(or (not (coll? %)) (empty? %)))
+(def pair? (complement atom?))
+; emulate old style
+(def car first)
+(def caar (comp first first))
+(def cadr second)
+(def caddr #(nth % 3))
+(def cadddr #(nth % 4))
+(def cdr rest)
+(def cdar (comp rest first))
+(def cddr (comp rest rest))
+; we use do for begin
 
-;; define your app data so that it doesn't get over-written on reload
+(declare env-global eprogn eq? evlis extend  ; not a Clojure fn, bad highlighting
+         invoke lookup make-function update! wrong)
 
-(defonce app-state (atom {:text "Hello world!"}))
+(defn evaluate
+  [exp env]  ; the book uses e instead of exp
+  (if (atom? exp)
+    (if (symbol? exp)
+      (lookup exp env)
+      exp)  ; no check here but some are in the book
+    (case (car exp)
+      Brut
+        (cadr exp)
+      Si
+        (if (not (eq? (evaluate (cadr exp) env) 'Faux))
+          (evaluate (caddr exp) env)
+          (evaluate (cadddr exp) env))
+      Bloc
+        (eprogn (cdr exp) env)
+      Affecter_a
+        (update! (cadr exp) env (evaluate (caddr exp) env))
+      Fonction
+        (make-function (cadr exp) (cddr exp) env)
+      (invoke (evaluate (car exp) env) (evlis (cdr exp) env)))))
 
+(defn evaluate-str
+  [src]
+  (evaluate (reader/read-string src) env-global))
 
-(defn on-js-reload []
-  ;; optionally touch your app-state to force rerendering depending on
-  ;; your application
-  ;; (swap! app-state update-in [:__figwheel_counter] inc)
-)
+(defn eprogn
+  [exps env]
+  (if (pair? exps)
+    (if (pair? (cdr exps))
+      (do
+        (evaluate (car exps) env)
+        (eprogn (cdr exps) env)
+        (evaluate (car exps) env))
+      'Rien )))
+
+(defn evlis
+  [exps env]
+  (if (pair? exps)
+    ; this version forces left to right eval
+    (let [argument1 (evaluate (car exps) env)]
+                    (cons argument1 (evlis (cdr exps) env))); !!! [] vs ()
+    []))
+
+(defn invoke
+  [fun args]  ; changed `fn` to `fun`
+  (if (fn? fun)
+    (fun args)
+    (wrong "Not a function" fun)))
+
+(defn make-function
+  [variables body env]
+  (fn [values] (eprogn body (extend env variables values))))
+
+; Regarding the env:
+; * we don't use a A-list but a simple map
+; * implementation of lookup, update!, extend are different than in the book
+; * we don't need `set-cdr!` anymore!
+; * we don't def an `env-init` to be filled to `env-global` but def the
+;   latter right away
+; * we don't need `definitial` or `defprimitive`, but `make-prim`
+
+; utility function, like defprimitive but renamed value->fun values->args
+(defn make-prim
+  [name fun arity]
+  (fn [args]
+    (if (= arity (count args))
+      (apply fun args)  ; The real apply of Clojure
+      (wrong "Incorrect arity" (list name args)))))
+
+(def env-global
+  {'Rien 'Rien
+   'Vrai 'Vrai
+   'Faux 'Faux
+   'foo 'Rien
+   '+ (make-prim "+" + 2)
+  })
+
+(defn lookup
+  [id env]
+  (let [value (id env)]
+    (if (nil? value)  ; nil can't be a value in MicroAlg
+      (wrong "No such binding" id))
+      value))
+
+; TODO: lock Rien Vrai Faux and primitives
+(defn update!
+  [id env value]
+  (let [oldvalue (id env)]
+    (if (nil? value)  ; nil can't be a value in MicroAlg
+      (wrong "No such binding" id)
+      (do
+        (swap! env #(update % id (constantly value)))
+        'Rien))))  ; return value of an assignment
+
+(defn wrong
+  [& args]
+  (throw args))
+
+(defn extend
+  [env variables values]
+  (cond
+    (symbol? variables)
+      (assoc env variables values)
+    (coll? variables)
+      (let [num-vars (count variables)
+            num-vals (count values)]
+        (cond
+          (> num-vars num-vals)
+            (wrong "Too less values")
+          (< num-vars num-vals)
+            (wrong "Too much values")
+          :else (apply assoc env (map vector variables values))))
+    :else (wrong "Cannot handle this env extension")))
