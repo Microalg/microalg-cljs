@@ -1,10 +1,6 @@
-# microalg
+# MicroAlg
 
-FIXME: Write a one-line description of your library/project.
-
-## Overview
-
-FIXME: Write a paragraph about the library/project and highlight its goals.
+Programming language for great beginners (French only)
 
 ## Setup
 
@@ -32,8 +28,10 @@ To create a production build run:
 And open your browser in `resources/public/index.html`. You will not
 get live reloading, nor a REPL. 
 
+## Some notes
+
+* Project starting with the help of [this article](https://www.packtpub.com/books/content/testing-your-application-cljstest)
+
 ## License
 
-Copyright © 2014 FIXME
-
-Distributed under the Eclipse Public License either version 1.0 or (at your option) any later version.
+GPL2
