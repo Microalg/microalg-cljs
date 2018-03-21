@@ -28,6 +28,11 @@ To create a production build run:
 And open your browser in `resources/public/index.html`. You will not
 get live reloading, nor a REPL. 
 
+## Run the tests
+
+* `lein doo phantom test once`
+* `lein doo phantom test`
+
 ## Some notes
 
 * Project starting with the help of [this article](https://www.packtpub.com/books/content/testing-your-application-cljstest)

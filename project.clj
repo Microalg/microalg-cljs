@@ -13,6 +13,7 @@
                  [org.clojure/core.async  "0.4.474"]]
 
   :plugins [[lein-figwheel "0.5.15"]
+            [lein-doo "0.1.9"]
             [lein-cljsbuild "1.1.7" :exclusions [[org.clojure/clojure]]]]
 
   :source-paths ["src"]
@@ -39,6 +40,12 @@
                            ;; To console.log CLJS data-structures make sure you enable devtools in Chrome
                            ;; https://github.com/binaryage/cljs-devtools
                            :preloads [devtools.preload]}}
+               {:id "test"
+                :source-paths ["src" "test"]
+                :compiler {:main microalg.test-runner
+                           :output-to
+                             "resources/public/js/compiled/microalg_test.js"
+                           :optimizations :none}}
                ;; This next build is a compressed minified build for
                ;; production. You can build this with:
                ;; lein cljsbuild once min
