@@ -2,6 +2,13 @@
 
 Programming language for great beginners (French only)
 
+## Use
+
+### REPL with Lumo
+
+* Install Node then Lumo
+* `bin/microalg`
+
 ## Setup
 
 To get an interactive development environment run:

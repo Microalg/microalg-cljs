@@ -1,8 +1,6 @@
 (ns microalg.core
     (:require [cljs.reader :as reader]))
 
-(enable-console-print!)
-
 ; « the book » means Lisp in Small Pieces
 ; atom? and pair? are not in Clojure (many more types than atom vs pairs)
 (def atom? #(or (not (coll? %)) (empty? %)))
