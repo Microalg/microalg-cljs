@@ -4,8 +4,5 @@
 
 (deftest sexpr-test
   (are [expected actual] (= expected actual)
-       ;[:sexp [:number "1"]] (parser "1")
-       [:sexp [:operation [:operator "+"]
-                          [:args [:sarg [:arg "2"]] [:sarg [:arg "2"]]]]]
-       (parser "(+ 2 2)")
+       '(+ 2 2) (parser "(+ 2 2)")
        ))
