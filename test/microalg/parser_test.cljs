@@ -7,6 +7,10 @@
        1 (parser "1")
        'x (parser "x")
        '(+ 2 2) (parser "(+ 2 2)")
+       '(+ 1 (+ 2 3)) (parser "(+ 1 (+ 2 3))")))
+
+(deftest string-test
+  (are [expected actual] (= expected actual)
        '(Afficher "Bonjour tout le monde !")
          (parser "(Afficher \"Bonjour tout le monde !\")")
        '(Afficher "Avec un \" pour voir")
