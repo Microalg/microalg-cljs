@@ -22,7 +22,10 @@
 
 (defn read-str
   [src]
-  (str/replace (apply str (rest (drop-last src))) "\\\"" "\""))
+  (let [quotes-removed (apply str (rest (drop-last src)))]
+    (-> quotes-removed
+        (str/replace  "\\\\" "\\")
+        (str/replace  "\\\"" "\""))))
 
 (defn parser
   [src]

@@ -11,4 +11,5 @@
          (parser "(Afficher \"Bonjour tout le monde !\")")
        '(Afficher "Avec un \" pour voir")
          (parser "(Afficher \"Avec un \\\" pour voir\")")
-       ))
+       '(Afficher "Avec un \\ aussi pour voir")
+         (parser "(Afficher \"Avec un \\\\ aussi pour voir\")")))
