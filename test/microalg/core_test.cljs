@@ -3,6 +3,8 @@
               [microalg.core :refer (evaluate env-global)]))
 
 (deftest arithmetics-test
-    (are [expected actual] (= expected actual)
-         3 (evaluate '(+ 1 2) env-global)
-         6 (evaluate '(+ 1 (+ 2 3)) env-global)))
+  (are [actual expected] (= actual expected)
+       (evaluate '(+ 1 2) env-global)
+       3
+       (evaluate '(+ 1 (+ 2 3)) env-global)
+       6))
