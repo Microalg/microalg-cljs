@@ -12,7 +12,7 @@
    atom = num / str / sym
    num = #'[0-9]+'
    str = #'\"([^\\\"]|\\\\|\\\")*\"'
-   sym = #'[a-zA-Z0-9_=+-/*~|{}^!?#$%&\\'`]*'
+   sym = #'[a-zA-Z0-9_=+-/*~|{}^!?#$%&\\'`]+'
    operation = <'('> wspace* src (wspace+ src)* wspace* <')'>
    <wspace>  = <#'\\s'>")
 
