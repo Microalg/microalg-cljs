@@ -27,9 +27,28 @@
         (str/replace  "\\\\" "\\")
         (str/replace  "\\\"" "\""))))
 
+(defn pretty-expecting
+  [expected]
+  (case (str expected)
+    "(" "opening parenthesis"
+    ")" "closing parenthesis"
+    "/^\\s/" "whitespace"
+    "/^[0-9]+/" "number"
+    "/^\\\"([^\\\"]|\\\\|\\\")*\\\"/" "string"
+    "/^[a-zA-Z0-9_=+-/*~|{}^!?#$%&'`]+/" "symbol"
+    (str expected)))
+
 (defn parser
   [src]
-  (insta/transform
-    {:atom identity :operation list
-     :num read-num :str read-str :sym symbol}
-    (first (grammar src))))
+  (let [result (grammar src)]
+    (if (insta/failure? result)
+      (let [{:keys [line column reason]} (insta/get-failure result)]
+        {:type :parse
+         :line line
+         :column column
+         :info (->> reason (map :expecting)
+                           (map pretty-expecting))})
+      (insta/transform
+        {:atom identity :operation list
+         :num read-num :str read-str :sym symbol}
+        (first (grammar src))))))
