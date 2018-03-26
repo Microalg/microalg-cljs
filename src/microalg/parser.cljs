@@ -51,4 +51,4 @@
       (insta/transform
         {:atom identity :operation list
          :num read-num :str read-str :sym symbol}
-        (first (grammar src))))))
+        (first result)))))
