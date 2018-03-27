@@ -43,7 +43,7 @@
 
 (defn evaluate-str
   [src]
-  (evaluate (reader/read-string src) env-global))
+  (evaluate (parser src) env-global))
 
 (defn eprogn
   [exps env]
