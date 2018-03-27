@@ -43,12 +43,13 @@
   (let [result (grammar src)]
     (if (insta/failure? result)
       (let [{:keys [line column reason]} (insta/get-failure result)]
-        {:type :parse
-         :line line
-         :column column
-         :info (->> reason (map :expecting)
-                           (map pretty-expecting))})
-      (insta/transform
-        {:atom identity :operation list
-         :num read-num :str read-str :sym symbol}
-        (first result)))))
+        [:parse-error
+         {:line line
+          :column column
+          :info (->> reason (map :expecting)
+                            (map pretty-expecting))}])
+      [:sexpr
+       (insta/transform
+         {:atom identity :operation list
+          :num read-num :str read-str :sym symbol}
+         (first result))])))
