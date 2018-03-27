@@ -1,5 +1,5 @@
 (ns microalg.core
-    (:require [cljs.reader :as reader]
+    (:require [cljs.core.match :refer-macros [match]]
               [microalg.parser :refer [parser]]))
 
 ; « the book » means Lisp in Small Pieces
@@ -42,8 +42,12 @@
       (invoke (evaluate (car exp) env) (evlis (cdr exp) env)))))
 
 (defn evaluate-str
-  [src]
-  (evaluate (parser src) env-global))
+  [src env]
+  (let [result (parser src)]
+    (match result
+      [:sexpr sexpr] (evaluate sexpr env)
+      ; at this point the result should be an error, we forward it
+      :else result)))
 
 (defn eprogn
   [exps env]
