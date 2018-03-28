@@ -11,6 +11,7 @@
   :dependencies [[org.clojure/clojure "1.9.0"]
                  [org.clojure/clojurescript "1.9.946"]
                  [org.clojure/core.async  "0.4.474"]
+                 [doo "0.1.9"]
                  [org.clojure/core.match  "0.3.0-alpha5"]
                  [instaparse "1.4.8"]]
 
@@ -54,6 +55,7 @@
                {:id "min"
                 :source-paths ["src"]
                 :compiler {:output-to "resources/public/js/compiled/microalg.js"
+                           :output-dir "resources/public/js/compiled/min.out"
                            :main microalg.core
                            :optimizations :advanced
                            :pretty-print false}}]}
