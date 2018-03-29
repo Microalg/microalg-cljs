@@ -20,3 +20,11 @@
        [:parse-error
         {:line 1 :column 7
          :info ["closing parenthesis" "whitespace"]}]))
+
+(deftest eval-errors-test
+  (are [actual expected] (= actual expected)
+       (evaluate-str "(+ 1 (-- 2 3))" env-global)
+       [:eval-error
+        {:start-line 1 :start-column 7
+         :end-line 1 :end-column 9
+         :info [:no-such-binding "--"]}]))

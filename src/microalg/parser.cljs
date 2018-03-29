@@ -48,8 +48,9 @@
           :column column
           :info (->> reason (map :expecting)
                             (map pretty-expecting))}])
-      [:sexpr
-       (insta/transform
-         {:atom identity :operation list
-          :num read-num :str read-str :sym symbol}
-         (first result))])))
+      (let [with-pos (insta/add-line-and-column-info-to-metadata src result)]
+        [:sexpr
+         (insta/transform
+           {:atom identity :operation list
+            :num read-num :str read-str :sym symbol}
+           (first with-pos))]))))

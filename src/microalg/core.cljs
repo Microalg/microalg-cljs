@@ -41,11 +41,17 @@
         (make-function (cadr exp) (cddr exp) env)
       (invoke (evaluate (car exp) env) (evlis (cdr exp) env)))))
 
+(defn safe-evaluate
+  [exp env]
+  (try
+    (evaluate exp env)
+    (catch js/Object e e)))
+
 (defn evaluate-str
   [src env]
   (let [result (parser src)]
     (match result
-      [:sexpr sexpr] (evaluate sexpr env)
+      [:sexpr sexpr] (safe-evaluate sexpr env)
       ; at this point the result should be an error, we forward it
       :else result)))
 
@@ -105,7 +111,7 @@
   [id env]
   (let [value (id env)]
     (if (nil? value)  ; nil can't be a value in MicroAlg
-      (wrong "No such binding" id))
+      (wrong :no-such-binding id (str id)))
       value))
 
 ; TODO: lock Rien Vrai Faux and primitives
@@ -113,14 +119,21 @@
   [id env value]
   (let [oldvalue (id env)]
     (if (nil? value)  ; nil can't be a value in MicroAlg
-      (wrong "No such binding" id)
+      (wrong :no-such-binding id)
       (do
         (swap! env #(update % id (constantly value)))
         'Rien))))  ; return value of an assignment
 
 (defn wrong
-  [& args]
-  (throw args))
+  [tag expr-with-pos-as-meta & args]
+  (let [pos-as-meta (meta expr-with-pos-as-meta)]
+    (throw
+      ; OPTIMIZE: those keywords should appear in the let.
+      [:eval-error {:start-line   (:instaparse.gll/start-line pos-as-meta)
+                    :start-column (:instaparse.gll/start-column pos-as-meta)
+                    :end-line     (:instaparse.gll/end-line pos-as-meta)
+                    :end-column   (:instaparse.gll/end-column pos-as-meta)
+                    :info (apply vector tag args)}])))
 
 (defn extend
   [env variables values]
