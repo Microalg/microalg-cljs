@@ -1,3 +1,6 @@
 #!/bin/bash
 
-lumo -c src -m microalg.repl
+export MICROALG_HOME="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/.."
+
+lumo -c src:"$MICROALG_HOME"/lib/instaparse-1.4.8.jar \
+        -m microalg.repl
