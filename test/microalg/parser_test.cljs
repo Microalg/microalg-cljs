@@ -44,10 +44,10 @@
        [:parse-error
         {:line 1 :column 3
          :info ["closing parenthesis" "whitespace"]}]
-       (parser "(+ 2")
+       (parser "(+ ")
        [:parse-error
-        {:line 1 :column 5
-         :info ["closing parenthesis" "whitespace"]}]
+        {:line 1 :column 4
+         :info ["closing parenthesis" "whitespace" "opening parenthesis" "number" "string" "symbol"]}]
        (parser "(+ 2 2")
        [:parse-error
         {:line 1 :column 7
