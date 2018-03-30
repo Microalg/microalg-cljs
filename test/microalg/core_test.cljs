@@ -4,15 +4,10 @@
 
 (deftest arithmetics-test
   (are [actual expected] (= actual expected)
-       (evaluate '(+ 1 2) env-global)
+       (evaluate-str "(+ 1 2)" env-global)
        3
-       (evaluate '(+ 1 (+ 2 3)) env-global)
+       (evaluate-str "(+ 1 (+ 2 3))" env-global)
        6))
-
-(deftest evaluate-str-test
-  (are [actual expected] (= actual expected)
-       (evaluate-str "(+ 2 2)" env-global)
-       4))
 
 (deftest parse-propagation-errors-test
   (are [actual expected] (= actual expected)
