@@ -12,8 +12,8 @@
    atom = num / str / sym
    num = #'[0-9]+'
    str = #'\"([^\\\"]|\\\\|\\\")*\"'
-   sym = #'[a-zA-Z0-9_=+-/*~|{}^!?#$%&\\'`]+'
-   operation = <'('> wspace* src (wspace+ src)* wspace* <')'>
+   sym = #'[a-zA-Z_=+-/*~|{}^!?#$%&\\'`]+'
+   operation = <'('> wspace* (sym | operation) (wspace+ src)* wspace* <')'>
    <wspace>  = <#'\\s'>")
 
 (defn read-num
@@ -36,7 +36,7 @@
     "/^\\s/" "whitespace"
     "/^[0-9]+/" "number"
     "/^\\\"([^\\\"]|\\\\|\\\")*\\\"/" "string"
-    "/^[a-zA-Z0-9_=+-/*~|{}^!?#$%&'`]+/" "symbol"
+    "/^[a-zA-Z_=+-/*~|{}^!?#$%&'`]+/" "symbol"
     (str expected)))
 
 (defn parser

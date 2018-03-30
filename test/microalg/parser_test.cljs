@@ -31,15 +31,23 @@
        (parser "(")
        [:parse-error
         {:line 1 :column 2
-         :info ["opening parenthesis" "number" "whitespace" "string" "symbol"]}]
+         :info ["opening parenthesis" "symbol" "whitespace"]}]
        (parser ")")
        [:parse-error
         {:line 1 :column 1
          :info ["opening parenthesis" "number" "string" "symbol"]}]
+       (parser "(1 2 3)")
+       [:parse-error
+        {:line 1 :column 2
+         :info ["opening parenthesis" "symbol" "whitespace"]}]
+       (parser "(\"salut\" 2 3)")
+       [:parse-error
+        {:line 1 :column 2
+         :info ["opening parenthesis" "symbol" "whitespace"]}]
        (parser "()")
        [:parse-error
         {:line 1 :column 2
-         :info ["opening parenthesis" "number" "whitespace" "string" "symbol"]}]
+         :info ["opening parenthesis" "symbol" "whitespace"]}]
        (parser "(+")
        [:parse-error
         {:line 1 :column 3
