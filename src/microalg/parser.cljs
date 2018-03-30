@@ -18,6 +18,7 @@
 
 (defn read-num
   [src]
+  ; TODO: clever number representation
   (read-string src))
 
 (def strip-first-and-last-chars #(apply str (rest (drop-last %))))
