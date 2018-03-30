@@ -15,12 +15,12 @@
 
 (deftest string-test
   (are [actual expected] (= actual expected)
-       (parser "(Afficher \"Bonjour tout le monde !\")")
-       [:sexpr '(Afficher "Bonjour tout le monde !")]
-       (parser "(Afficher \"Avec un \\\" pour voir\")")
-       [:sexpr '(Afficher "Avec un \" pour voir")]
-       (parser "(Afficher \"Avec un \\\\ aussi pour voir\")")
-       [:sexpr '(Afficher "Avec un \\ aussi pour voir")]))
+       (parser "\"Bonjour tout le monde !\"")
+       [:sexpr "Bonjour tout le monde !"]
+       (parser "\"Avec un \\\" pour voir\"")
+       [:sexpr "Avec un \" pour voir"]
+       (parser "\"Avec un \\\\ aussi pour voir\"")
+       [:sexpr "Avec un \\ aussi pour voir"]))
 
 (deftest errors-test
   (are [actual expected] (= actual expected)
