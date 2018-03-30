@@ -20,12 +20,12 @@
   [src]
   (read-string src))
 
-(defn read-str
-  [src]
-  (let [quotes-removed (apply str (rest (drop-last src)))]
-    (-> quotes-removed
-        (str/replace  "\\\\" "\\")
-        (str/replace  "\\\"" "\""))))
+(def strip-first-and-last-chars #(apply str (rest (drop-last %))))
+
+(def escape-backslashes #(-> % (str/replace  "\\\\" "\\")
+                               (str/replace  "\\\"" "\"")))
+
+(def read-str (comp escape-backslashes strip-first-and-last-chars))
 
 (defn pretty-expecting
   [expected]
