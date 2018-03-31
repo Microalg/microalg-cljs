@@ -76,7 +76,13 @@
 (defn invoke
   [expr fun args]  ; changed `fn` to `fun` and added `expr` for error msg
   (if (fn? fun)
-    (fun args)
+    (try
+      (fun args)
+      (catch js/Object e
+        (match e
+          [:incorrect-arity expected-arity arity args]
+            (wrong :incorrect-arity expr (str expr) expected-arity arity args)
+          :else e)))
     (wrong :not-a-function expr (str expr))))
 
 (defn make-function
@@ -97,7 +103,8 @@
   (fn [args]
     (if (= arity (count args))
       (apply fun args)  ; The real apply of Clojure
-      (wrong "Incorrect arity" (list name args)))))
+      ; not like in the book: should be caught in `invoke`
+      (throw [:incorrect-arity arity (count args) args]))))
 
 (def env-global
   {'Rien 'Rien

@@ -18,6 +18,16 @@
 
 (deftest eval-errors-test
   (are [actual expected] (= actual expected)
+       (evaluate-str "(+ 1 2 3)" env-global)
+       [:eval-error
+        {:start-line 1 :start-column 2
+         :end-line 1 :end-column 3
+         :info [:incorrect-arity "+" 2 3 '(1 2 3)]}]
+       (evaluate-str "(+ 1 2 (+ 3 4))" env-global)
+       [:eval-error
+        {:start-line 1 :start-column 2
+         :end-line 1 :end-column 3
+         :info [:incorrect-arity "+" 2 3 '(1 2 7)]}]
        (evaluate-str "(+ 1 (foo 2 3))" env-global)
        [:eval-error
         {:start-line 1 :start-column 7
