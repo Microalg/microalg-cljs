@@ -152,8 +152,8 @@
             num-vals (count values)]
         (cond
           (> num-vars num-vals)
-            (wrong "Too less values")
+            (wrong :too-less-values (first variables))
           (< num-vars num-vals)
-            (wrong "Too much values")
+            (wrong :too-much-values (first variables))
           :else (apply assoc env (map vector variables values))))
-    :else (wrong "Cannot handle this env extension")))
+    :else (wrong :cannot-handle-this-env-extension)))
