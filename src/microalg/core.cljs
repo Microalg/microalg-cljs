@@ -39,7 +39,7 @@
         (update! (cadr exp) env (evaluate (caddr exp) env))
       Fonction
         (make-function (cadr exp) (cddr exp) env)
-      (invoke (evaluate (car exp) env) (evlis (cdr exp) env)))))
+      (invoke (car exp) (evaluate (car exp) env) (evlis (cdr exp) env)))))
 
 (defn safe-evaluate
   [exp env]
@@ -74,10 +74,10 @@
     []))
 
 (defn invoke
-  [fun args]  ; changed `fn` to `fun`
+  [expr fun args]  ; changed `fn` to `fun` and added `expr` for error msg
   (if (fn? fun)
     (fun args)
-    (wrong "Not a function" fun)))
+    (wrong :not-a-function expr (str expr))))
 
 (defn make-function
   [variables body env]

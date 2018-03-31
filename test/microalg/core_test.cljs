@@ -18,6 +18,11 @@
 
 (deftest eval-errors-test
   (are [actual expected] (= actual expected)
+       (evaluate-str "(+ 1 (foo 2 3))" env-global)
+       [:eval-error
+        {:start-line 1 :start-column 7
+         :end-line 1 :end-column 10
+         :info [:not-a-function "foo"]}]
        (evaluate-str "(+ 1 (-- 2 3))" env-global)
        [:eval-error
         {:start-line 1 :start-column 7
