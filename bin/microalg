@@ -2,5 +2,5 @@
 
 export MICROALG_HOME="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/.."
 
-lumo -c src:"$MICROALG_HOME"/lib/instaparse-1.4.8.jar \
+lumo -c src:"$MICROALG_HOME"/lib/instaparse-lumo-1.4.7.jar:"$MICROALG_HOME"/lib/core.match-0.3.0-alpha5.jar \
         -m microalg.repl
