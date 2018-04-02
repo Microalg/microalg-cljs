@@ -10,8 +10,8 @@
 (def car first)
 (def caar (comp first first))
 (def cadr second)
-(def caddr #(nth % 3))
-(def cadddr #(nth % 4))
+(def caddr #(nth % 2))  ; third
+(def cadddr #(nth % 3)) ; fourth
 (def cdr rest)
 (def cdar (comp rest first))
 (def cddr (comp rest rest))
