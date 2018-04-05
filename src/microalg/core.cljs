@@ -1,6 +1,6 @@
 (ns microalg.core
     (:require [cljs.core.match :refer-macros [match]]
-              [microalg.parser :refer [parser]]))
+              [microalg.parser]))
 
 (enable-console-print!)
 
@@ -56,7 +56,7 @@
 
 (defn evaluate-str
   [src env]
-  (let [result (parser src)]
+  (let [result (microalg.parser/parser src)]
     (match result
       [:sexpr sexpr] (safe-evaluate sexpr env)
       ; at this point the result should be an error, we forward it
