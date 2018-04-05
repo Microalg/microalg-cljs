@@ -4,9 +4,9 @@ Programming language for great beginners (French only)
 
 ## Use
 
-### REPL with Lumo
+### REPL with Node
 
-* Install Node then Lumo
+* Install Node
 * `bin/microalg`
 
 ## Setup
