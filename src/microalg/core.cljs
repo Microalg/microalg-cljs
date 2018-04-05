@@ -2,12 +2,6 @@
     (:require [cljs.core.match :refer-macros [match]]
               [microalg.parser]))
 
-(enable-console-print!)
-
-(defn -main []
-  (println "Hello world!"))
-
-(set! *main-cli-fn* -main)
 
 ; « the book » means Lisp in Small Pieces
 ; atom? and pair? are not in Clojure (many more types than atom vs pairs)

@@ -14,3 +14,5 @@
 (defn -main
   []
   (toplevel))
+
+(set! *main-cli-fn* -main)

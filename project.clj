@@ -45,7 +45,7 @@
                            :preloads [devtools.preload]}}
                {:id "node"
                 :source-paths ["src"]
-                :compiler {:main microalg.core
+                :compiler {:main microalg.repl
                            :target :nodejs
                            :output-to
                              "microalg.js"
