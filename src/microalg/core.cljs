@@ -2,6 +2,8 @@
     (:require [cljs.core.match :refer-macros [match]]
               [microalg.parser]))
 
+(declare env-global eprogn eq? evlis extend  ; not a Clojure fn, bad highlighting
+         invoke lookup make-function update! wrong)
 
 ; « the book » means Lisp in Small Pieces
 ; atom? and pair? are not in Clojure (many more types than atom vs pairs)
@@ -17,9 +19,6 @@
 (def cdar (comp rest first))
 (def cddr (comp rest rest))
 ; we use do for begin
-
-(declare env-global eprogn eq? evlis extend  ; not a Clojure fn, bad highlighting
-         invoke lookup make-function update! wrong)
 
 (defn evaluate
   [exp env]  ; the book uses e instead of exp
