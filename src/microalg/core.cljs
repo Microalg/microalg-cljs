@@ -156,4 +156,4 @@
           (< num-vars num-vals)
             (wrong :too-much-values (first variables))
           :else (apply assoc env (map vector variables values))))
-    :else (wrong :cannot-handle-this-env-extension)))
+    :else (wrong :cannot-handle-this-env-extension nil nil variables values)))
