@@ -1,6 +1,8 @@
 /resources/public/js/compiled/**
 figwheel_server.log
 pom.xml
+/node_modules/
+/microalg.js
 *jar
 /lib/
 /classes/

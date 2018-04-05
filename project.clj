@@ -43,6 +43,13 @@
                            ;; To console.log CLJS data-structures make sure you enable devtools in Chrome
                            ;; https://github.com/binaryage/cljs-devtools
                            :preloads [devtools.preload]}}
+               {:id "node"
+                :source-paths ["src"]
+                :compiler {:main microalg.core
+                           :target :nodejs
+                           :output-to
+                             "microalg.js"
+                           :optimizations :none}}
                {:id "test"
                 :source-paths ["src" "test"]
                 :compiler {:main microalg.test-runner
