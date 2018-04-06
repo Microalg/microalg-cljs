@@ -38,7 +38,7 @@
                 :compiler {:main microalg.core
                            :asset-path "js/compiled/out"
                            :output-to "resources/public/js/compiled/microalg.js"
-                           :output-dir "resources/public/js/compiled/out"
+                           :output-dir "resources/public/js/compiled/dev"
                            :source-map-timestamp true
                            ;; To console.log CLJS data-structures make sure you enable devtools in Chrome
                            ;; https://github.com/binaryage/cljs-devtools
@@ -49,12 +49,14 @@
                            :target :nodejs
                            :output-to
                              "microalg.js"
+                           :output-dir "resources/public/js/compiled/node"
                            :optimizations :none}}
                {:id "test"
                 :source-paths ["src" "test"]
                 :compiler {:main microalg.test-runner
                            :output-to
                              "resources/public/js/compiled/microalg_test.js"
+                           :output-dir "resources/public/js/compiled/test"
                            :optimizations :none}}
                ;; This next build is a compressed minified build for
                ;; production. You can build this with:
@@ -62,7 +64,7 @@
                {:id "min"
                 :source-paths ["src"]
                 :compiler {:output-to "resources/public/js/compiled/microalg.js"
-                           :output-dir "resources/public/js/compiled/min.out"
+                           :output-dir "resources/public/js/compiled/min"
                            :main microalg.core
                            :optimizations :advanced
                            :pretty-print false}}]}
