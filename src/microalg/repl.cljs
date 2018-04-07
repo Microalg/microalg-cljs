@@ -1,5 +1,5 @@
 (ns microalg.repl
-    (:require [microalg.core :as malg]))
+    (:require [microalg.interp :as interp]))
 
 (enable-console-print!)
 
@@ -8,7 +8,7 @@
                                         :output (.-stdout js/process)}))
 (defn toplevel
   []
-  (.question rl "> " #(do (println (malg/evaluate-str % malg/env-global))
+  (.question rl "> " #(do (println (interp/evaluate-str % interp/env-global))
                           (toplevel))))
 
 (defn -main
