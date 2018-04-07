@@ -36,7 +36,7 @@
                            :open-urls ["http://localhost:3449/index.html"]}
 
                 :compiler {:main microalg.core
-                           :asset-path "js/compiled/out"
+                           :asset-path "js/compiled/dev"
                            :output-to "resources/public/js/compiled/microalg.js"
                            :output-dir "resources/public/js/compiled/dev"
                            :source-map-timestamp true
