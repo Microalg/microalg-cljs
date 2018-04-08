@@ -2,4 +2,6 @@
     (:require [jquery]
               [jquery.terminal]))
 
-(def term (.terminal (js/$ "#app")))
+(def app-div (js/$ "#app"))
+(.html app-div "")
+(def term (.terminal app-div))
