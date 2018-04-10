@@ -33,6 +33,11 @@
         {:start-line 1 :start-column 7
          :end-line 1 :end-column 10
          :info [:not-a-function "foo"]}]
+       (evaluate-str "(Affecter_a x 1)" env-global)
+       [:eval-error
+        {:start-line 1 :start-column 13
+         :end-line 1 :end-column 14
+         :info [:no-such-binding "x"]}]
        (evaluate-str "(+ 1 (-- 2 3))" env-global)
        [:eval-error
         {:start-line 1 :start-column 7

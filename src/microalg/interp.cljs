@@ -107,16 +107,16 @@
       (throw [:incorrect-arity arity (count args) args]))))
 
 (def env-global
-  {'Rien 'Rien
-   'Vrai 'Vrai
-   'Faux 'Faux
-   'foo 'Rien
-   '+ (make-prim "+" + 2)
-  })
+  (atom {'Rien 'Rien
+         'Vrai 'Vrai
+         'Faux 'Faux
+         'foo 'Rien
+         '+ (make-prim "+" + 2)
+         }))
 
 (defn lookup
   [id env]
-  (let [value (id env)]
+  (let [value (id @env)]
     (if (nil? value)  ; nil can't be a value in MicroAlg
       (wrong :no-such-binding id (str id)))
       value))
@@ -124,9 +124,9 @@
 ; TODO: lock Rien Vrai Faux and primitives
 (defn update!
   [id env value]
-  (let [oldvalue (id env)]
-    (if (nil? value)  ; nil can't be a value in MicroAlg
-      (wrong :no-such-binding id)
+  (let [oldvalue (id @env)]
+    (if (nil? oldvalue)  ; nil can't be a value in MicroAlg
+      (wrong :no-such-binding id (str id))
       (do
         (swap! env #(update % id (constantly value)))
         'Rien))))  ; return value of an assignment
@@ -146,7 +146,7 @@
   [env variables values]
   (cond
     (symbol? variables)
-      (assoc env variables values)
+      (swap! env #(update % variables (constantly values)))
     (coll? variables)
       (let [num-vars (count variables)
             num-vals (count values)]
@@ -155,5 +155,5 @@
             (wrong :too-less-values (first variables))
           (< num-vars num-vals)
             (wrong :too-much-values (first variables))
-          :else (apply assoc env (map vector variables values))))
-    :else (wrong :cannot-handle-this-env-extension nil nil variables values)))
+          :else (swap! env #(apply assoc % (map vector variables values))))
+    :else (wrong :cannot-handle-this-env-extension nil nil variables values))))
