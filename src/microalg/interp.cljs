@@ -2,7 +2,8 @@
     (:require [cljs.core.match :refer-macros [match]]
               [microalg.parser]))
 
-(declare env-global eprogn eq? evlis extend  ; not a Clojure fn, bad highlighting
+(declare env-global-base-value env-global
+         eprogn eq? evlis extend  ; not a Clojure fn, bad highlighting
          invoke lookup make-function update! wrong)
 
 ; « the book » means Lisp in Small Pieces
@@ -39,6 +40,9 @@
         (update! (cadr exp) env (evaluate (caddr exp) env))
       Fonction
         (make-function (cadr exp) (cddr exp) env)
+      RAZ_environnement
+        (do (reset! env-global env-global-base-value)
+            'Rien)
       (invoke (car exp) (evaluate (car exp) env) (evlis (cdr exp) env)))))
 
 (defn safe-evaluate
@@ -106,13 +110,15 @@
       ; not like in the book: should be caught in `invoke`
       (throw [:incorrect-arity arity (count args) args]))))
 
-(def env-global
-  (atom {'Rien 'Rien
-         'Vrai 'Vrai
-         'Faux 'Faux
-         'foo 'Rien
-         '+ (make-prim "+" + 2)
-         }))
+(def env-global-base-value
+  {'Rien 'Rien
+   'Vrai 'Vrai
+   'Faux 'Faux
+   'foo 'Rien
+   '+ (make-prim "+" + 2)
+   })
+
+(def env-global (atom env-global-base-value))
 
 (defn lookup
   [id env]
