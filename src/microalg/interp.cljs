@@ -134,7 +134,7 @@
     (if (nil? oldvalue)  ; nil can't be a value in MicroAlg
       (wrong :no-such-binding id (str id))
       (do
-        (swap! env #(update % id (constantly value)))
+        (swap! env assoc id value)
         'Rien))))  ; return value of an assignment
 
 (defn wrong
