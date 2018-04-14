@@ -1,6 +1,6 @@
 (ns microalg.interp-test
     (:require [cljs.test :refer-macros [deftest are]]
-              [microalg.interp :refer (evaluate-str evaluate env-global)]))
+              [microalg.interp :refer (evaluate-str env-global)]))
 
 (deftest arithmetics-test
   (are [actual expected] (= actual expected)
