@@ -43,9 +43,10 @@
       RAZ_environnement
         (do (reset! env-global env-global-base-value)
             'Rien)
-      (invoke (car exp)
-              (evaluate (car exp) env conf)
-              (evlis (cdr exp) env conf)))))
+      (let [f-expr (car exp)
+            f-val  (evaluate (car exp) env conf)
+            args   (evlis (cdr exp) env conf)]
+        (do (invoke f-expr f-val args))))))
 
 (defn safe-evaluate
   [exp env conf]
