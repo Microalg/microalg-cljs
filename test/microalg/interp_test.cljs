@@ -9,6 +9,19 @@
        (evaluate-str "(+ 1 (+ 2 3))" env-global)
        6))
 
+(deftest vars-test
+  (are [actual expected] (= actual expected)
+       (evaluate-str "foo" env-global)
+       'Rien
+       (evaluate-str "(Affecter_a foo 1)" env-global)
+       'Rien
+       (evaluate-str "foo" env-global)
+       1
+       (evaluate-str "(RAZ_environnement)" env-global)
+       'Rien
+       (evaluate-str "foo" env-global)
+       'Rien))
+
 (deftest parse-propagation-errors-test
   (are [actual expected] (= actual expected)
        (evaluate-str "(+ 2 2" env-global)
@@ -43,16 +56,3 @@
         {:start-line 1 :start-column 7
          :end-line 1 :end-column 9
          :info [:no-such-binding "--"]}]))
-
-(deftest vars-test
-  (are [actual expected] (= actual expected)
-       (evaluate-str "foo" env-global)
-       'Rien
-       (evaluate-str "(Affecter_a foo 1)" env-global)
-       'Rien
-       (evaluate-str "foo" env-global)
-       1
-       (evaluate-str "(RAZ_environnement)" env-global)
-       'Rien
-       (evaluate-str "foo" env-global)
-       'Rien))
