@@ -22,7 +22,7 @@
 ; we use do for begin
 
 (defn evaluate
-  [exp env]  ; the book uses e instead of exp
+  [exp env conf]  ; the book uses e instead of exp
   (if (atom? exp)
     (if (symbol? exp)
       (lookup exp env)
@@ -31,33 +31,37 @@
       Brut
         (cadr exp)
       Si
-        (if (not (eq? (evaluate (cadr exp) env) 'Faux))
-          (evaluate (caddr exp) env)
-          (evaluate (cadddr exp) env))
+        (if (not (eq? (evaluate (cadr exp) env conf) 'Faux))
+          (evaluate (caddr exp) env conf)
+          (evaluate (cadddr exp) env conf))
       Bloc
         (eprogn (cdr exp) env)
       Affecter_a
-        (update! (cadr exp) env (evaluate (caddr exp) env))
+        (update! (cadr exp) env (evaluate (caddr exp) env conf))
       Fonction
         (make-function (cadr exp) (cddr exp) env)
       RAZ_environnement
         (do (reset! env-global env-global-base-value)
             'Rien)
-      (invoke (car exp) (evaluate (car exp) env) (evlis (cdr exp) env)))))
+      (invoke (car exp)
+              (evaluate (car exp) env conf)
+              (evlis (cdr exp) env conf)))))
 
 (defn safe-evaluate
-  [exp env]
+  [exp env conf]
   (try
-    (evaluate exp env)
+    (evaluate exp env conf)
     (catch js/Object e e)))
 
 (defn evaluate-str
-  [src env]
-  (let [result (microalg.parser/parser src)]
-    (match result
-      [:sexpr sexpr] (safe-evaluate sexpr env)
+  ([src env]
+   (evaluate-str src env {}))
+  ([src env conf]
+   (let [result (microalg.parser/parser src)]
+     (match result
+      [:sexpr sexpr] (safe-evaluate sexpr env conf)
       ; at this point the result should be an error, we forward it
-      :else result)))
+      :else result))))
 
 (defn eprogn
   [exps env]
@@ -70,11 +74,11 @@
       'Rien )))
 
 (defn evlis
-  [exps env]
+  [exps env conf]
   (if (pair? exps)
     ; this version forces left to right eval
-    (let [argument1 (evaluate (car exps) env)]
-                    (cons argument1 (evlis (cdr exps) env))); !!! [] vs ()
+    (let [argument1 (evaluate (car exps) env conf)]
+                    (cons argument1 (evlis (cdr exps) env conf))); !!! [] vs ()
     []))
 
 (defn invoke
