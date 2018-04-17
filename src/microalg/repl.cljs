@@ -8,7 +8,7 @@
                                         :output (.-stdout js/process)}))
 (defn toplevel
   []
-  (.question rl "> " #(do (println (interp/evaluate-str % interp/env-global))
+  (.question rl "> " #(do (println (interp/evaluate-str %))
                           (toplevel))))
 
 (defn -main

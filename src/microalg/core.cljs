@@ -10,7 +10,7 @@
 
 (.html app-div "")
 (def term (.terminal app-div
-                     #(clj->js (interp/evaluate-str % interp/env-global))
+                     #(clj->js (interp/evaluate-str %))
                      (clj->js options)))
 (.clear term)
 (.echo term "MicroAlg")
