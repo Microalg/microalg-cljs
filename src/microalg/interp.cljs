@@ -22,73 +22,75 @@
 ; we use do for begin
 
 (defn extract-env
-  [interp-key]
-  (-> @interps (get interp-key) :env))
+  [interp-key new-vars]
+  (merge (-> @interps (get interp-key) :env) new-vars))
 
 (defn evaluate
-  [exp interp-key]  ; the book uses e instead of exp
-  (let [env (extract-env interp-key)]
+  [exp [interp-key new-vars]]  ; the book uses e instead of exp
+  (let [env (extract-env interp-key new-vars)]
     (if (atom? exp)
       (if (symbol? exp)
-        (lookup exp interp-key)
+        (lookup exp [interp-key new-vars])
         exp)  ; no check here but some are in the book
       (case (car exp)
         Brut
           (cadr exp)
         Si
-          (if (not (eq? (evaluate (cadr exp) interp-key) 'Faux))
-            (evaluate (caddr exp) interp-key)
-            (evaluate (cadddr exp) interp-key))
+          (if (not (eq? (evaluate (cadr exp) [interp-key new-vars]) 'Faux))
+            (evaluate (caddr exp) [interp-key new-vars])
+            (evaluate (cadddr exp) [interp-key new-vars]))
         Bloc
-          (eprogn (cdr exp) interp-key)
+          (eprogn (cdr exp) [interp-key new-vars])
         Affecter_a
-          (update! (cadr exp) interp-key (evaluate (caddr exp) interp-key))
+          (update! (cadr exp)
+                   [interp-key new-vars]
+                   (evaluate (caddr exp) [interp-key new-vars]))
         Fonction
-          (make-function (cadr exp) (cddr exp) interp-key)
+          (make-function (cadr exp) (cddr exp) [interp-key new-vars])
         RAZ_environnement
           (do (swap! interps assoc-in [interp-key :env] env-base-value)
               'Rien)
         (let [f-expr (car exp)
-              f-val  (evaluate (car exp) interp-key)
-              args   (evlis (cdr exp) interp-key)]
+              f-val  (evaluate (car exp) [interp-key new-vars])
+              args   (evlis (cdr exp) [interp-key new-vars])]
           (invoke f-expr f-val args))))))
 
 (defn safe-evaluate
-  [exp interp-key]
+  [exp [interp-key new-vars]]
   (try
-    (evaluate exp interp-key)
+    (evaluate exp [interp-key new-vars])
     (catch js/Object e e)))
 
 (defn evaluate-str
   ([src]
-   (evaluate-str src "default"))
-  ([src interp-key]
+   (evaluate-str src ["default" {}]))
+  ([src [interp-key new-vars]]
    (when (not (some #{interp-key} (keys @interps)))
      (swap! interps assoc interp-key default-interp-data))
    (let [result (microalg.parser/parser src)]
      (match result
-      [:sexpr sexpr] (safe-evaluate sexpr interp-key)
+      [:sexpr sexpr] (safe-evaluate sexpr [interp-key new-vars])
       ; at this point the result should be an error, we forward it
       :else result))))
 
 (defn eprogn
-  [exps interp-key]
-  (let [env (extract-env interp-key)]
+  [exps [interp-key new-vars]]
+  (let [env (extract-env interp-key new-vars)]
     (if (pair? exps)
       (if (pair? (cdr exps))
         (do
-          (evaluate (car exps) interp-key)
-          (eprogn (cdr exps) interp-key))
-        (evaluate (car exps) interp-key))
+          (evaluate (car exps) [interp-key new-vars])
+          (eprogn (cdr exps) [interp-key new-vars]))
+        (evaluate (car exps) [interp-key new-vars]))
       'Rien )))
 
 (defn evlis
-  [exps interp-key]
-  (let [env (extract-env interp-key)]
+  [exps [interp-key new-vars]]
+  (let [env (extract-env interp-key new-vars)]
     (if (pair? exps)
       ; this version forces left to right eval
-      (let [argument1 (evaluate (car exps) interp-key)]
-           (cons argument1 (evlis (cdr exps) interp-key))); !!! [] vs ()
+      (let [argument1 (evaluate (car exps) [interp-key new-vars])]
+           (cons argument1 (evlis (cdr exps) [interp-key new-vars]))); !!! [] vs ()
       [])))
 
 (defn invoke
@@ -104,8 +106,9 @@
     (wrong :not-a-function expr (str expr))))
 
 (defn make-function
-  [variables body interp-key]
-  (fn [values] (eprogn body (extend interp-key variables values))))
+  [variables body [interp-key new-vars]]
+  (fn [& values]
+    (eprogn body (extend [interp-key new-vars] variables values))))
 
 ; Regarding the env:
 ; * we don't use a A-list but a simple map
@@ -139,8 +142,8 @@
    :runs []})
 
 (defn lookup
-  [id interp-key]
-  (let [env (extract-env interp-key)
+  [id [interp-key new-vars]]
+  (let [env (extract-env interp-key new-vars)
         value (id env)]
     (if (nil? value)  ; nil can't be a value in MicroAlg
       (wrong :no-such-binding id (str id)))
@@ -148,8 +151,8 @@
 
 ; TODO: lock Rien Vrai Faux and primitives
 (defn update!
-  [id interp-key value]
-  (let [env (extract-env interp-key)
+  [id [interp-key new-vars] value]
+  (let [env (extract-env interp-key new-vars)
         oldvalue (id env)]
     (if (nil? oldvalue)  ; nil can't be a value in MicroAlg
       (wrong :no-such-binding id (str id))
@@ -169,18 +172,15 @@
                     :info (apply vector tag args)}])))
 
 (defn extend
-  [interp-key variables values]
-  (let [env (extract-env interp-key)]
+  [[interp-key new-vars] variables values]
+  (let [env (extract-env interp-key new-vars)
+        num-vars (count variables)
+        num-vals (count values)]
     (cond
-      (symbol? variables)
-        (swap! env #(update % variables (constantly values)))
-      (coll? variables)
-        (let [num-vars (count variables)
-              num-vals (count values)]
-          (cond
-            (> num-vars num-vals)
-              (wrong :too-less-values (first variables))
-            (< num-vars num-vals)
-              (wrong :too-much-values (first variables))
-            :else (swap! env #(apply assoc % (map vector variables values))))
-      :else (wrong :cannot-handle-this-env-extension nil nil variables values)))))
+      (> num-vars num-vals)
+        (wrong :too-less-values (first variables))
+      (< num-vars num-vals)
+        (wrong :too-much-values (first variables))
+      :else
+        (let [var-val-pairs (map vector variables values)]
+          [interp-key (into new-vars var-val-pairs)]))))

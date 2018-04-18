@@ -22,6 +22,13 @@
        (evaluate-str "foo")
        'Rien))
 
+(deftest fun-def-test
+  (are [actual expected] (= actual expected)
+       (evaluate-str "((Fonction (x) (Affecter_a foo x)) 2)")
+       'Rien
+       (evaluate-str "foo")
+       2))
+
 (deftest parse-propagation-errors-test
   (are [actual expected] (= actual expected)
        (evaluate-str "(+ 2 2")
