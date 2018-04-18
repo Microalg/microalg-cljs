@@ -95,7 +95,7 @@
   [expr fun args]  ; changed `fn` to `fun` and added `expr` for error msg
   (if (fn? fun)
     (try
-      (fun args)
+      (apply fun args)
       (catch js/Object e
         (match e
           [:incorrect-arity expected-arity arity args]
@@ -118,7 +118,7 @@
 ; utility function, like defprimitive but renamed value->fun values->args
 (defn make-prim
   [name fun arity]
-  (fn [args]
+  (fn [& args]
     (if (= arity (count args))
       (apply fun args)  ; The real apply of Clojure
       ; not like in the book: should be caught in `invoke`
