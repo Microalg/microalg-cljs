@@ -88,7 +88,7 @@
     (if (pair? exps)
       ; this version forces left to right eval
       (let [argument1 (evaluate (car exps) interp-key)]
-                      (cons argument1 (evlis (cdr exps) interp-key))); !!! [] vs ()
+           (cons argument1 (evlis (cdr exps) interp-key))); !!! [] vs ()
       [])))
 
 (defn invoke
