@@ -51,7 +51,7 @@
         (let [f-expr (car exp)
               f-val  (evaluate (car exp) interp-key)
               args   (evlis (cdr exp) interp-key)]
-          (do (invoke f-expr f-val args)))))))
+          (invoke f-expr f-val args))))))
 
 (defn safe-evaluate
   [exp interp-key]
