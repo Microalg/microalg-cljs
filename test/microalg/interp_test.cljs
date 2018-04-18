@@ -38,16 +38,21 @@
 
 (deftest eval-errors-test
   (are [actual expected] (= actual expected)
+       (evaluate-str "(+ 2)")
+       [:eval-error
+        {:start-line 1 :start-column 2
+         :end-line 1 :end-column 3
+         :info [:incorrect-arity "+" 2 1 '(2)]}]
        (evaluate-str "(+ 1 2 3)")
        [:eval-error
         {:start-line 1 :start-column 2
          :end-line 1 :end-column 3
          :info [:incorrect-arity "+" 2 3 '(1 2 3)]}]
-       (evaluate-str "(+ 1 2 (+ 3 4))")
+       (evaluate-str "(+ 1 (+ 2 3 4))")
        [:eval-error
-        {:start-line 1 :start-column 2
-         :end-line 1 :end-column 3
-         :info [:incorrect-arity "+" 2 3 '(1 2 7)]}]
+        {:start-line 1 :start-column 7
+         :end-line 1 :end-column 8
+         :info [:incorrect-arity "+" 2 3 '(2 3 4)]}]
        (evaluate-str "(+ 1 (foo 2 3))")
        [:eval-error
         {:start-line 1 :start-column 7
