@@ -78,9 +78,9 @@
       (if (pair? (cdr exps))
         (do
           (evaluate (car exps) interp-key)
-          (eprogn (cdr exps) interp-key)
-          (evaluate (car exps) interp-key))
-        'Rien ))))
+          (eprogn (cdr exps) interp-key))
+        (evaluate (car exps) interp-key))
+      'Rien )))
 
 (defn evlis
   [exps interp-key]
