@@ -48,7 +48,7 @@
                 :compiler {:main microalg.repl
                            :target :nodejs
                            :output-to
-                             "microalg.js"
+                             "bin/microalg.js"
                            :output-dir "resources/public/js/compiled/node"
                            :optimizations :none}}
                {:id "test"
