@@ -101,9 +101,9 @@
       (catch js/Object e
         (match e
           [:incorrect-arity expected-arity arity args]
-            (wrong :incorrect-arity expr (str expr) expected-arity arity args)
+            (wrong :incorrect-arity (meta expr) (str expr) expected-arity arity args)
           :else e)))
-    (wrong :not-a-function expr (str expr))))
+    (wrong :not-a-function (meta expr) (str expr))))
 
 (defn make-function
   [variables body [interp-key new-vars]]
@@ -146,7 +146,7 @@
   (let [env (extract-env interp-key new-vars)
         value (id env)]
     (if (nil? value)  ; nil can't be a value in MicroAlg
-      (wrong :no-such-binding id (str id)))
+      (wrong :no-such-binding (meta id) (str id)))
       value))
 
 ; TODO: lock Rien Vrai Faux and primitives
@@ -155,21 +155,20 @@
   (let [env (extract-env interp-key new-vars)
         oldvalue (id env)]
     (if (nil? oldvalue)  ; nil can't be a value in MicroAlg
-      (wrong :no-such-binding id (str id))
+      (wrong :no-such-binding (meta id) (str id))
       (do
         (swap! interps assoc-in [interp-key :env id] value)
         'Rien))))  ; return value of an assignment
 
 (defn wrong
-  [tag expr-with-pos-as-meta & args]
-  (let [pos-as-meta (meta expr-with-pos-as-meta)]
-    (throw
-      ; OPTIMIZE: those keywords should appear in the let.
-      [:eval-error {:start-line   (:instaparse.gll/start-line pos-as-meta)
-                    :start-column (:instaparse.gll/start-column pos-as-meta)
-                    :end-line     (:instaparse.gll/end-line pos-as-meta)
-                    :end-column   (:instaparse.gll/end-column pos-as-meta)
-                    :info (apply vector tag args)}])))
+  [tag pos-info & args]
+  (throw
+    ; OPTIMIZE: those keywords should appear in the let.
+    [:eval-error {:start-line   (:instaparse.gll/start-line pos-info)
+                  :start-column (:instaparse.gll/start-column pos-info)
+                  :end-line     (:instaparse.gll/end-line pos-info)
+                  :end-column   (:instaparse.gll/end-column pos-info)
+                  :info (apply vector tag args)}]))
 
 (defn extend
   [[interp-key new-vars] variables values]
