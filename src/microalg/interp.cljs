@@ -46,7 +46,10 @@
                    [interp-key new-vars]
                    (evaluate (caddr exp) [interp-key new-vars]))
         Fonction
-          (make-function (cadr exp) (cddr exp) [interp-key new-vars])
+          (make-function [interp-key new-vars]
+                         {:pos (meta exp)
+                          :variables (cadr exp)
+                          :body (cddr exp)})
         RAZ_environnement
           (do (swap! interps assoc-in [interp-key :env] env-base-value)
               'Rien)
@@ -106,9 +109,12 @@
     (wrong :not-a-function (meta expr) (str expr))))
 
 (defn make-function
-  [variables body [interp-key new-vars]]
+  [[interp-key new-vars] {:keys [pos variables body]}]
   (fn [& values]
-    (eprogn body (extend [interp-key new-vars] variables values))))
+    (eprogn body (extend [interp-key new-vars]
+                         {:pos       pos
+                          :variables variables
+                          :values    values}))))
 
 ; Regarding the env:
 ; * we don't use a A-list but a simple map
@@ -171,15 +177,13 @@
                   :info (apply vector tag args)}]))
 
 (defn extend
-  [[interp-key new-vars] variables values]
+  [[interp-key new-vars] {:keys [pos variables values]}]
   (let [env (extract-env interp-key new-vars)
         num-vars (count variables)
         num-vals (count values)]
     (cond
-      (> num-vars num-vals)
-        (wrong :too-less-values (first variables))
-      (< num-vars num-vals)
-        (wrong :too-much-values (first variables))
+      (not= num-vars num-vals)
+        (wrong :incorrect-arity pos num-vars num-vals values)
       :else
         (let [var-val-pairs (map vector variables values)]
           [interp-key (into new-vars var-val-pairs)]))))

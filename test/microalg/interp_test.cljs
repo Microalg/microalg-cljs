@@ -68,3 +68,16 @@
         {:start-line 1 :start-column 7
          :end-line 1 :end-column 9
          :info [:no-such-binding "--"]}]))
+
+(deftest user-fn-arity-errors-test
+  (are [actual expected] (= actual expected)
+       (evaluate-str "((Fonction (x) (Affecter_a foo x)) 2 3)")
+       [:eval-error
+        {:start-line 1 :start-column 2
+         :end-line 1 :end-column 35
+         :info [:incorrect-arity 1 2 '(2 3)]}]
+       (evaluate-str "((Fonction (x y) (Affecter_a foo x)) 2)")
+       [:eval-error
+        {:start-line 1 :start-column 2
+         :end-line 1 :end-column 37
+         :info [:incorrect-arity 2 1 '(2)]}]))
