@@ -101,7 +101,7 @@
       (catch js/Object e
         (match e
           [:incorrect-arity expected-arity arity args]
-            (wrong :incorrect-arity (meta expr) (str expr) expected-arity arity args)
+            (wrong :incorrect-arity (meta expr) expected-arity arity args)
           :else e)))
     (wrong :not-a-function (meta expr) (str expr))))
 
