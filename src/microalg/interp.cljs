@@ -131,6 +131,7 @@
     (if (= arity (count args))
       (apply fun args)  ; The real apply of Clojure
       ; not like in the book: should be caught in `invoke`
+      ; that's why we do not use `wrong` but `throw` directly.
       (throw [:incorrect-arity arity (count args) args]))))
 
 (def interps (atom {}))
